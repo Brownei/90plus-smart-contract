@@ -1,0 +1,367 @@
+{
+  "version": "0.1.0",
+  "name": "betting",
+  "instructions": [
+    {
+      "name": "initialize",
+      "accounts": [
+        {
+          "name": "platformConfig",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "platformFee",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "createMatch",
+      "accounts": [
+        {
+          "name": "matchAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "teamA",
+          "type": "string"
+        },
+        {
+          "name": "teamB",
+          "type": "string"
+        },
+        {
+          "name": "matchId",
+          "type": "string"
+        },
+        {
+          "name": "startTime",
+          "type": "i64"
+        }
+      ]
+    },
+    {
+      "name": "placeBet",
+      "accounts": [
+        {
+          "name": "bettor",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "bet",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "matchAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "bettorTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "escrowTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        },
+        {
+          "name": "predictedWinner",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "settleMatch",
+      "accounts": [
+        {
+          "name": "matchAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "platformConfig",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "authority",
+          "isMut": false,
+          "isSigner": true
+        }
+      ],
+      "args": [
+        {
+          "name": "winner",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "claimWinnings",
+      "accounts": [
+        {
+          "name": "bet",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "matchAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "platformConfig",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "escrowTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "winnerTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "platformTokenAccount",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    }
+  ],
+  "accounts": [
+    {
+      "name": "PlatformConfig",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "authority",
+            "type": "publicKey"
+          },
+          {
+            "name": "platformFee",
+            "type": "u8"
+          },
+          {
+            "name": "isInitialized",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Match",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "teamA",
+            "type": "string"
+          },
+          {
+            "name": "teamB",
+            "type": "string"
+          },
+          {
+            "name": "matchId",
+            "type": "string"
+          },
+          {
+            "name": "startTime",
+            "type": "i64"
+          },
+          {
+            "name": "status",
+            "type": {
+              "defined": "MatchStatus"
+            }
+          },
+          {
+            "name": "winner",
+            "type": "string"
+          },
+          {
+            "name": "authority",
+            "type": "publicKey"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Bet",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "bettor",
+            "type": "publicKey"
+          },
+          {
+            "name": "matchAccount",
+            "type": "publicKey"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "predictedWinner",
+            "type": "string"
+          },
+          {
+            "name": "status",
+            "type": {
+              "defined": "BetStatus"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "types": [
+    {
+      "name": "MatchStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Pending"
+          },
+          {
+            "name": "Completed"
+          }
+        ]
+      }
+    },
+    {
+      "name": "BetStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Active"
+          },
+          {
+            "name": "Settled"
+          }
+        ]
+      }
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "Unauthorized",
+      "msg": "You are not authorized to perform this action"
+    },
+    {
+      "code": 6001,
+      "name": "InsufficientBalance",
+      "msg": "Insufficient funds"
+    },
+    {
+      "code": 6002,
+      "name": "GameAlreadyStarted",
+      "msg": "Game has already started"
+    },
+    {
+      "code": 6003,
+      "name": "GameNotStarted",
+      "msg": "Game has not started yet"
+    },
+    {
+      "code": 6004,
+      "name": "BetAlreadySettled",
+      "msg": "Bet has already been settled"
+    },
+    {
+      "code": 6005,
+      "name": "GameAlreadySettled",
+      "msg": "Game has already been settled"
+    },
+    {
+      "code": 6006,
+      "name": "NumericalOverflow",
+      "msg": "Numerical overflow"
+    },
+    {
+      "code": 6007,
+      "name": "InvalidGameData",
+      "msg": "Invalid game data provided"
+    },
+    {
+      "code": 6008,
+      "name": "InvalidBetAmount",
+      "msg": "Invalid bet amount"
+    },
+    {
+      "code": 6009,
+      "name": "NotWinner",
+      "msg": "Not the winner"
+    },
+    {
+      "code": 6010,
+      "name": "InvalidPlatformFee",
+      "msg": "Invalid platform fee"
+    }
+  ],
+  "metadata": {
+    "address": "9Td4ouVX6SUftqAYQozfNEwGp2v6m5XE83GQNS7F5K92"
+  }
+}

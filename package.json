@@ -3,14 +3,25 @@
   "version": "0.1.0",
   "description": "P2P betting platform on Solana",
   "main": "index.js",
+  "type": "commonjs",
+  "license": "MIT",
   "scripts": {
     "test": "anchor test",
     "build": "anchor build",
-    "deploy": "anchor deploy"
+    "deploy": "anchor deploy",
+    "start-validator": "solana-test-validator --reset",
+    "test-with-validator": "pkill solana-test-validator || true && (solana-test-validator --reset --rpc-port 8899 --faucet-port 8990 --bind-address 127.0.0.1 --ledger /tmp/solana-ledger & pid=$! && sleep 5 && anchor test; ret=$?; kill $pid 2>/dev/null || true; exit $ret)",
+    "deploy:devnet": "./switch-network.sh devnet && anchor deploy",
+    "deploy:testnet": "./switch-network.sh testnet && anchor deploy",
+    "deploy:mainnet": "./switch-network.sh mainnet && anchor deploy",
+    "test:deployed": "./run-deployed-tests.sh",
+    "test:deployed:devnet": "./run-deployed-tests.sh devnet",
+    "test:deployed:testnet": "./run-deployed-tests.sh testnet",
+    "test:deployed:mainnet": "./run-deployed-tests.sh mainnet"
   },
   "dependencies": {
     "@coral-xyz/anchor": "^0.30.0",
-    "@solana/spl-token": "^0.3.9",
+    "@solana/spl-token": "^0.4.13",
     "@solana/wallet-adapter-base": "^0.9.23",
     "@solana/wallet-adapter-react": "^0.15.35",
     "@solana/wallet-adapter-react-ui": "^0.9.34",

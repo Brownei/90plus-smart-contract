@@ -41,7 +41,7 @@ pub mod betting {
         let bet = &mut ctx.accounts.bet;
         let match_account = &ctx.accounts.match_account;
         
-        require!(match_account.status == MatchStatus::Completed, ErrorCode::GameNotStarted);
+        require!(match_account.status == MatchStatus::Pending, ErrorCode::GameAlreadyStarted);
         require!(amount > 0, ErrorCode::InvalidBetAmount);
         
         // Transfer tokens from bettor to escrow
